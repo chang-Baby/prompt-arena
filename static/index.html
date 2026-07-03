@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 格斗擂台</title>
+    <!-- 引入 CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- 标题 -->
+        <div class="header">
+            <h1>⚔️ AI 格斗擂台</h1>
+            <p>写下你的角色 · AI 决定胜负</p>
+        </div>
+
+        <!-- 场景 -->
+        <div class="scene-area">
+            <span class="label">🏟️ 擂台</span>
+            <span class="scene-text" id="sceneText">点击右侧随机生成</span>
+            <button class="btn-scene" id="randomSceneBtn">🎲 随机场景</button>
+        </div>
+
+        <!-- 输入 -->
+        <div class="input-area">
+            <div class="input-box">
+                <h3>🥊 玩家1</h3>
+                <textarea id="prompt1" placeholder="描述你的角色..."></textarea>
+            </div>
+            <div class="input-box">
+                <h3>🥋 玩家2</h3>
+                <textarea id="prompt2" placeholder="描述你的角色..."></textarea>
+            </div>
+        </div>
+
+        <!-- 战斗按钮 -->
+        <button class="btn-fight" id="fightBtn">🔥 开始格斗</button>
+
+        <!-- 加载 -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top:12px;">AI 正在生成战斗...</p>
+        </div>
+
+        <!-- 结果 -->
+        <div class="result-area" id="resultArea">
+            <div class="result-characters" id="charactersContainer"></div>
+            <div class="story-box" id="storyBox"></div>
+            <div class="winner-box" id="winnerBox"></div>
+            <button class="btn-rematch" id="rematchBtn">🔄 再来一局</button>
+        </div>
+    </div>
+
+    <!-- 引入 JavaScript -->
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
