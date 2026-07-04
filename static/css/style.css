@@ -1,4 +1,3 @@
-#样式
 /* ============================================================
    style.css - AI 格斗擂台 样式
    ============================================================ */
@@ -20,6 +19,17 @@ body {
     padding: 20px;
 }
 
+/* ====== 页面淡入 ====== */
+.fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 .container {
     max-width: 1000px;
     width: 100%;
@@ -29,6 +39,26 @@ body {
 .header {
     text-align: center;
     margin-bottom: 30px;
+    position: relative;
+}
+
+.btn-leaderboard {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: transparent;
+    border: 2px solid #ffd700;
+    color: #ffd700;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.btn-leaderboard:hover {
+    background: #ffd700;
+    color: #0a0a0a;
 }
 
 .header h1 {
@@ -37,6 +67,7 @@ body {
     background: linear-gradient(135deg, #ff6b35, #f7931e);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
     letter-spacing: 4px;
 }
 
@@ -197,11 +228,105 @@ body {
     display: block;
 }
 
+/* ====== Canvas 格斗场 ====== */
+.battle-arena-wrap {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #2a221f;
+    background: #080706;
+}
+
+#battleCanvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 5 / 2;
+}
+
+.battle-action-text {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: #ffd700;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 4px 16px;
+    border-radius: 20px;
+    border: 1px solid #ff6b35;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.battle-action-text.show {
+    opacity: 1;
+}
+
+.battle-action-text.skill {
+    color: #ff6b35;
+    border-color: #ffd700;
+    font-size: 16px;
+    animation: skillBanner 0.4s ease-out;
+}
+
+@keyframes skillBanner {
+    0%   { transform: translateX(-50%) scale(0.5); opacity: 0; }
+    60%  { transform: translateX(-50%) scale(1.1); opacity: 1; }
+    100% { transform: translateX(-50%) scale(1);   opacity: 1; }
+}
+
+.char-card .hp-bar-wrap {
+    margin: 8px 0 4px;
+}
+
+.char-card .hp-bar-bg {
+    height: 8px;
+    background: #1a1614;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.char-card .hp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #66bb6a, #43a047);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 100%;
+}
+
+.char-card .hp-bar-fill.low {
+    background: linear-gradient(90deg, #ffa726, #ef5350);
+}
+
+.char-card .hp-text {
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+}
+
+.char-card .hp-text .dmg-flash {
+    color: #ef5350;
+    font-weight: bold;
+    animation: dmgFlash 0.5s ease;
+}
+
+@keyframes dmgFlash {
+    0%   { color: #ff0000; transform: scale(1.3); }
+    100% { color: #ef5350; transform: scale(1); }
+}
+
 /* 角色卡片 */
 .result-characters {
     display: flex;
-    gap: 20px;
+    gap: 12px;
     margin-bottom: 20px;
+    align-items: stretch;
 }
 
 .char-card {
@@ -209,12 +334,110 @@ body {
     background: #0d0b0a;
     border-radius: 10px;
     padding: 16px;
-    border: 1px solid #2a221f;
+    border: 2px solid #2a221f;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.char-card .emoji {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 6px;
 }
 
 .char-card.winner {
     border-color: #ffd700;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    animation: winnerGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes winnerGlow {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.15);
+        border-color: #ffd700;
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.6), 0 0 50px rgba(255, 215, 0, 0.3);
+        border-color: #ffec8b;
+    }
+}
+
+/* 攻击效果 - 橙色边框闪烁 */
+.char-card.attacking {
+    border-color: #ff6b35;
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.7), inset 0 0 10px rgba(255, 107, 53, 0.2);
+    animation: attackFlash 0.25s ease-in-out;
+}
+
+@keyframes attackFlash {
+    0%, 100% { border-color: #ff6b35; }
+    50%      { border-color: #ffaa00; box-shadow: 0 0 30px rgba(255, 170, 0, 0.9); }
+}
+
+/* 受击效果 - 红色边框 + 震动 */
+.char-card.hit {
+    border-color: #ff3333;
+    box-shadow: 0 0 20px rgba(255, 51, 51, 0.7);
+    animation: hitShake 0.3s ease-in-out;
+}
+
+@keyframes hitShake {
+    0%, 100% { transform: translateX(0); border-color: #ff3333; }
+    20%      { transform: translateX(-6px); border-color: #ff6666; }
+    40%      { transform: translateX(6px);  border-color: #ff0000; }
+    60%      { transform: translateX(-4px); }
+    80%      { transform: translateX(4px);  }
+}
+
+/* VS 区域 + 火花 */
+.vs-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    position: relative;
+}
+
+.vs-text {
+    font-size: 28px;
+    font-weight: 900;
+    color: #ff6b35;
+    text-shadow: 0 0 10px rgba(255, 107, 53, 0.8);
+    z-index: 1;
+}
+
+.vs-sparks {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+}
+
+.spark {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #ffd700;
+    animation: sparkFly 0.6s ease-out infinite;
+}
+
+.spark:nth-child(1) { top: 50%; left: 50%; animation-delay: 0s;   --angle: 0deg;   }
+.spark:nth-child(2) { top: 50%; left: 50%; animation-delay: 0.15s; --angle: 72deg;  }
+.spark:nth-child(3) { top: 50%; left: 50%; animation-delay: 0.3s;  --angle: 144deg; }
+.spark:nth-child(4) { top: 50%; left: 50%; animation-delay: 0.45s; --angle: 216deg; }
+.spark:nth-child(5) { top: 50%; left: 50%; animation-delay: 0.1s;  --angle: 288deg; }
+
+@keyframes sparkFly {
+    0% {
+        transform: translate(-50%, -50%) rotate(var(--angle)) translateY(0);
+        opacity: 1;
+        background: #ffd700;
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-22px);
+        opacity: 0;
+        background: #ff6b35;
+    }
 }
 
 .char-card .name {
@@ -248,6 +471,12 @@ body {
     font-weight: bold;
 }
 
+.char-card .winner-label {
+    color: #ffd700;
+    font-weight: bold;
+    margin-top: 6px;
+}
+
 /* 战斗故事 */
 .story-box {
     background: #0d0b0a;
@@ -260,6 +489,21 @@ body {
     max-height: 250px;
     overflow-y: auto;
     margin-bottom: 16px;
+    min-height: 60px;
+}
+
+.story-box .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: #ff6b35;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 0.7s step-end infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
 }
 
 /* 获胜者 */
@@ -286,6 +530,20 @@ body {
     background: rgba(255, 213, 79, 0.1);
 }
 
+/* ELO 变化 */
+.elo-change {
+    text-align: center;
+    font-size: 16px;
+    color: #aaa;
+    margin-top: 8px;
+    padding: 8px;
+    background: #0d0b0a;
+    border-radius: 6px;
+}
+
+.elo-change .elo-up   { color: #66bb6a; font-weight: bold; }
+.elo-change .elo-down { color: #ef5350; font-weight: bold; }
+
 .btn-rematch {
     margin-top: 12px;
     width: 100%;
@@ -304,22 +562,278 @@ body {
     color: #0a0a0a;
 }
 
-/* ====== 响应式 ====== */
+/* ====== 战斗历史 ====== */
+.battle-history {
+    margin-top: 30px;
+    background: #12100e;
+    border: 1px solid #2a221f;
+    border-radius: 12px;
+    padding: 16px 20px;
+}
+
+.battle-history h3 {
+    font-size: 16px;
+    color: #ff6b35;
+    margin-bottom: 12px;
+}
+
+.history-list {
+    list-style: none;
+}
+
+.history-list li {
+    padding: 8px 12px;
+    border-bottom: 1px solid #2a221f;
+    font-size: 13px;
+    color: #aaa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.history-list li:last-child {
+    border-bottom: none;
+}
+
+.history-list .history-scene {
+    color: #e0d5c0;
+    flex: 1;
+    min-width: 120px;
+}
+
+.history-list .history-winner {
+    color: #ffd700;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.history-list .history-time {
+    color: #666;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.history-empty {
+    justify-content: center !important;
+    color: #555 !important;
+}
+
+/* ====== 排行榜弹窗 ====== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-content {
+    background: #12100e;
+    border: 2px solid #ffd700;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: modalIn 0.3s ease-out;
+}
+
+@keyframes modalIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a221f;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    color: #ffd700;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+}
+
+.modal-close:hover {
+    color: #ff6b35;
+}
+
+.modal-body {
+    overflow-y: auto;
+    padding: 12px 0;
+}
+
+.leaderboard-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid #1a1614;
+    gap: 12px;
+}
+
+.leaderboard-row:nth-child(1) .rank { color: #ffd700; }
+.leaderboard-row:nth-child(2) .rank { color: #c0c0c0; }
+.leaderboard-row:nth-child(3) .rank { color: #cd7f32; }
+
+.leaderboard-row .rank {
+    font-size: 18px;
+    font-weight: 900;
+    width: 30px;
+    text-align: center;
+    color: #888;
+}
+
+.leaderboard-row .name {
+    flex: 1;
+    color: #e0d5c0;
+}
+
+.leaderboard-row .elo {
+    color: #ff6b35;
+    font-weight: bold;
+}
+
+.leaderboard-row .record {
+    color: #666;
+    font-size: 12px;
+}
+
+.loading-text {
+    text-align: center;
+    color: #888;
+    padding: 20px;
+}
+
+/* ====== 响应式（移动端） ====== */
 @media (max-width: 700px) {
+    body {
+        padding: 12px;
+        align-items: flex-start;
+    }
+
     .input-area {
         flex-direction: column;
+        gap: 12px;
     }
+
     .result-characters {
         flex-direction: column;
+        align-items: center;
     }
+
+    .vs-container {
+        flex-direction: row;
+        min-width: unset;
+        padding: 8px 0;
+    }
+
+    .vs-text {
+        font-size: 22px;
+    }
+
     .header h1 {
-        font-size: 28px;
+        font-size: 26px;
+        letter-spacing: 2px;
+        padding-top: 36px;
     }
+
+    .header p {
+        font-size: 11px;
+        letter-spacing: 3px;
+    }
+
+    .btn-leaderboard {
+        top: 0;
+        right: 0;
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+
     .scene-area {
         flex-direction: column;
         text-align: center;
+        padding: 12px 16px;
     }
+
     .scene-area .scene-text {
-        font-size: 15px;
+        font-size: 14px;
+    }
+
+    .input-box h3 {
+        font-size: 14px;
+    }
+
+    .input-box textarea {
+        height: 80px;
+        font-size: 13px;
+    }
+
+    .btn-fight {
+        font-size: 16px;
+        padding: 12px;
+        letter-spacing: 2px;
+    }
+
+    .char-card .name {
+        font-size: 16px;
+    }
+
+    .char-card .emoji {
+        font-size: 28px;
+    }
+
+    .char-card .desc,
+    .char-card .stats {
+        font-size: 12px;
+    }
+
+    .story-box {
+        font-size: 13px;
+    }
+
+    #battleCanvas {
+        aspect-ratio: 4 / 3;
+    }
+
+    .battle-action-text {
+        font-size: 11px;
+        padding: 3px 10px;
+    }
+
+    .winner-box {
+        font-size: 22px;
+    }
+
+    .elo-change {
+        font-size: 13px;
+    }
+
+    .history-list li {
+        font-size: 11px;
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
